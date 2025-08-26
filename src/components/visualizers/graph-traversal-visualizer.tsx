@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Network, RotateCcw, Play, Pause, SkipForward, Plus } from "lucide-react"
 import type { JSX } from "react/jsx-runtime"
+import { toast } from "sonner"
 
 interface Edge {
     from: number
@@ -287,6 +288,13 @@ export function GraphTraversalVisualizer() {
         const from = Number.parseInt(addEdgeFrom)
         const to = Number.parseInt(addEdgeTo)
 
+        if (!nodes.includes(from) || !nodes.includes(to)) {
+            toast.error("Invalid Edge", {
+                description: "Both nodes must be valid",
+            })
+            return
+        }
+
         if (!isNaN(from) && !isNaN(to) && nodes.includes(from) && nodes.includes(to) && from !== to) {
             const edgeExists = edges.some(
                 (edge) => (edge.from === from && edge.to === to) || (edge.from === to && edge.to === from),
@@ -493,7 +501,7 @@ export function GraphTraversalVisualizer() {
                                     {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
                                 </Button>
                                 <Button onClick={handleStop} disabled={!isRunning} size="sm" variant="outline">
-                                    <SkipForward className="w-4 h-4" />
+                                    <RotateCcw className="w-4 h-4" />
                                 </Button>
                             </div>
                         </div>

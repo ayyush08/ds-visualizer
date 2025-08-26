@@ -23,6 +23,7 @@ import {
     RotateCcw,
 
     ArrowLeft,
+    GithubIcon,
 } from "lucide-react"
 
 import { ArrayVisualizer } from "@/components/visualizers/array-visualizer"
@@ -263,6 +264,7 @@ export function DataStructures() {
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </header>
                 <div className="container mx-auto px-4 py-6">{renderVisualizer()}</div>
@@ -283,9 +285,18 @@ export function DataStructures() {
                             <div>
                                 <h1 className="text-2xl font-bold font-serif">DS Visualizer</h1>
                                 <p className="text-sm text-muted-foreground">Competitive Programming Tool</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Made by <a className="italic" href="https://github.com/ayyush08" target="_blank" rel="noopener noreferrer">Ayush</a>
+                                </p>
+
                             </div>
                         </div>
-
+                        <div className="flex items-center gap-2">
+                            <Button className="cursor-pointer hover:bg-accent/75" variant="secondary" size="sm" onClick={() => window.open("https://github.com/ayyush08/ds-visualizer", "_blank")}>
+                                <GithubIcon className="w-4 h-4" />
+                                ⭐Star on GitHub
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </header>
