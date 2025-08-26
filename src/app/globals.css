@@ -4,22 +4,19 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0% 0 0);
+  --background: oklch(0.98 0.005 106);
   --foreground: oklch(0.28 0.015 252);
   --card: oklch(0.96 0.005 106);
   --card-foreground: oklch(0.28 0.015 252);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.28 0.015 252);
-  --primary: oklch(0.45 0.15 162);
-  /* emerald-600 #059669 */
+  --primary: oklch(0.45 0.15 162); /* emerald-600 #059669 */
   --primary-foreground: oklch(0.98 0.005 106);
-  --secondary: oklch(0.55 0.15 162);
-  /* emerald-500 #10b981 */
+  --secondary: oklch(0.55 0.15 162); /* emerald-500 #10b981 */
   --secondary-foreground: oklch(0.98 0.005 106);
   --muted: oklch(0.94 0.005 106);
   --muted-foreground: oklch(0.45 0.015 252);
-  --accent: oklch(0.55 0.15 162);
-  /* emerald-500 accent */
+  --accent: oklch(0.55 0.15 162); /* emerald-500 accent */
   --accent-foreground: oklch(0.98 0.005 106);
   --destructive: oklch(0.55 0.25 15);
   --destructive-foreground: oklch(0.98 0.005 106);
@@ -75,7 +72,6 @@
   --sidebar-accent-foreground: oklch(0.98 0.005 106);
   --sidebar-border: oklch(0.25 0.015 252);
   --sidebar-ring: oklch(0.55 0.15 162);
-  
 }
 
 @theme inline {
@@ -124,7 +120,6 @@
   * {
     @apply border-border outline-ring/50;
   }
-
   body {
     @apply bg-background text-foreground font-sans;
   }

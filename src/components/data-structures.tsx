@@ -21,7 +21,7 @@ import {
     Zap,
     Play,
     RotateCcw,
-    Settings,
+
     ArrowLeft,
 } from "lucide-react"
 
@@ -302,19 +302,19 @@ export function DataStructures() {
                             <CardContent className="space-y-2">
                                 <Tabs value={selectedCategory} onValueChange={setSelectedCategory} orientation="vertical">
                                     <TabsList className="grid w-full grid-cols-1 h-auto">
-                                        <TabsTrigger value="all" className="justify-start ">
+                                        <TabsTrigger value="all" className={`justify-start ${selectedCategory === "all" ? "bg-black border-green-300 text-primary-foreground" : ""}`}>
                                             All Structures
                                         </TabsTrigger>
-                                        <TabsTrigger value="basic" className="justify-start">
+                                        <TabsTrigger value="basic" className={`justify-start ${selectedCategory === "basic" ? "bg-black border-orange-300 text-primary-foreground" : ""}`}>
                                             Basic
                                         </TabsTrigger>
-                                        <TabsTrigger value="tree" className="justify-start">
+                                        <TabsTrigger value="tree" className={`justify-start ${selectedCategory === "tree" ? "bg-black border-orange-300 text-primary-foreground" : ""}`}>
                                             Trees
                                         </TabsTrigger>
-                                        <TabsTrigger value="graph" className="justify-start">
+                                        <TabsTrigger value="graph" className={`justify-start ${selectedCategory === "graph" ? "bg-black border-orange-300 text-primary-foreground" : ""}`}>
                                             Graphs
                                         </TabsTrigger>
-                                        <TabsTrigger value="advanced" className="justify-start">
+                                        <TabsTrigger value="advanced" className={`justify-start ${selectedCategory === "advanced" ? "bg-black border-orange-300 text-primary-foreground" : ""}`}>
                                             Advanced
                                         </TabsTrigger>
                                     </TabsList>

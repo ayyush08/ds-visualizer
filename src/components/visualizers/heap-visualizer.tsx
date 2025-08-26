@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { ArrowLeft, Plus, Trash2, RotateCcw, ArrowUp, ArrowDown } from "lucide-react"
+import {  Plus, Trash2, RotateCcw, ArrowUp, ArrowDown } from "lucide-react"
+import type { JSX } from "react/jsx-runtime" // Import JSX to fix the undeclared variable error
+import { toast } from "sonner"
 
 interface HeapNode {
     value: number
     isHighlighted?: boolean
     isComparing?: boolean
 }
+
 
 
 export function HeapVisualizer() {
@@ -31,9 +34,9 @@ export function HeapVisualizer() {
     const getLeftChildIndex = (index: number) => 2 * index + 1
     const getRightChildIndex = (index: number) => 2 * index + 2
 
-    const shouldSwap = (parentValue: number, childValue: number) => {
+    const shouldSwap = useCallback((parentValue: number, childValue: number) => {
         return heapType === "min" ? parentValue > childValue : parentValue < childValue
-    }
+    }, [heapType])
 
     const heapifyUp = useCallback(
         (startIndex: number, newHeap: HeapNode[]) => {
@@ -52,7 +55,7 @@ export function HeapVisualizer() {
 
             return newHeap
         },
-        [heapType],
+        [ shouldSwap],
     )
 
     const heapifyDown = useCallback(
@@ -81,12 +84,17 @@ export function HeapVisualizer() {
 
             return newHeap
         },
-        [heapType],
+        [shouldSwap],
     )
 
     const insert = () => {
         const value = Number.parseInt(inputValue)
-        if (isNaN(value)) return
+        if (isNaN(value)) {
+            toast.error("Invalid Input",{
+                description: "Please enter a valid number",
+            })
+            return
+        }
 
         clearHighlights()
         const newNode: HeapNode = { value, isHighlighted: true }
@@ -96,10 +104,19 @@ export function HeapVisualizer() {
         setHeap(finalHeap)
         setOperation(`Inserted ${value} into ${heapType}-heap`)
         setInputValue("")
+
+        toast.success("Inserted Successfully",{
+            description: `Added ${value} to the ${heapType}-heap`,
+        })
     }
 
     const extractRoot = () => {
-        if (heap.length === 0) return
+        if (heap.length === 0) {
+            toast.error("Empty Heap",{
+                description: "Cannot extract from an empty heap",
+            })
+            return
+        }
 
         clearHighlights()
         const root = heap[0].value
@@ -107,10 +124,12 @@ export function HeapVisualizer() {
         if (heap.length === 1) {
             setHeap([])
             setOperation(`Extracted root ${root} - heap is now empty`)
+            toast.success("Root Extracted",{
+                description: `Removed ${root} - heap is now empty`,
+            })
             return
         }
 
-        // Move last element to root and remove last
         const newHeap = [...heap]
         newHeap[0] = { ...newHeap[newHeap.length - 1], isHighlighted: true }
         newHeap.pop()
@@ -118,21 +137,10 @@ export function HeapVisualizer() {
         const finalHeap = heapifyDown(0, newHeap)
         setHeap(finalHeap)
         setOperation(`Extracted root ${root} from ${heapType}-heap`)
-    }
 
-    const buildHeap = () => {
-        if (heap.length <= 1) return
-
-        clearHighlights()
-        const newHeap = [...heap]
-
-        // Start from last non-leaf node and heapify down
-        for (let i = Math.floor(newHeap.length / 2) - 1; i >= 0; i--) {
-            heapifyDown(i, newHeap)
-        }
-
-        setHeap(newHeap)
-        setOperation(`Rebuilt ${heapType}-heap structure`)
+        toast.success("Root Extracted",{
+            description: `Removed ${root} from the ${heapType}-heap`,
+        })
     }
 
     const reset = () => {
@@ -145,8 +153,14 @@ export function HeapVisualizer() {
     const switchHeapType = (newType: "min" | "max") => {
         setHeapType(newType)
         if (heap.length > 0) {
-            // Rebuild heap with new type
-            setTimeout(() => buildHeap(), 100)
+            setTimeout(() => {
+                const newHeap = [...heap]
+                for (let i = Math.floor(newHeap.length / 2) - 1; i >= 0; i--) {
+                    heapifyDown(i, newHeap)
+                }
+                setHeap(newHeap)
+                setOperation(`Converted to ${newType}-heap`)
+            }, 100)
         }
     }
 
@@ -155,86 +169,92 @@ export function HeapVisualizer() {
             return <div className="flex items-center justify-center h-64 text-muted-foreground">Heap is empty</div>
         }
 
-        const levels: HeapNode[][] = []
-        let currentLevel = 0
-        let nodesInLevel = 1
-        let nodeIndex = 0
+        const renderHeapNode = (index: number, x: number, y: number, level: number): JSX.Element[] => {
+            if (index >= heap.length) return []
 
-        while (nodeIndex < heap.length) {
-            const level: HeapNode[] = []
-            for (let i = 0; i < nodesInLevel && nodeIndex < heap.length; i++) {
-                level.push(heap[nodeIndex])
-                nodeIndex++
+            const elements: JSX.Element[] = []
+            const spacing = Math.max(120 / (level + 1), 40)
+            const leftChildIndex = getLeftChildIndex(index)
+            const rightChildIndex = getRightChildIndex(index)
+
+            // Render connections to children (like BST)
+            if (leftChildIndex < heap.length) {
+                const isHighlighted = heap[index].isHighlighted || heap[leftChildIndex].isHighlighted
+                elements.push(
+                    <line
+                        key={`line-${index}-left`}
+                        x1={x}
+                        y1={y}
+                        x2={x - spacing}
+                        y2={y + 70}
+                        stroke={isHighlighted ? "#10b981" : "#6b7280"}
+                        strokeWidth={isHighlighted ? "4" : "3"}
+                        className="transition-all duration-300"
+                        opacity="0.8"
+                    />,
+                )
             }
-            levels.push(level)
-            nodesInLevel *= 2
-            currentLevel++
+
+            if (rightChildIndex < heap.length) {
+                const isHighlighted = heap[index].isHighlighted || heap[rightChildIndex].isHighlighted
+                elements.push(
+                    <line
+                        key={`line-${index}-right`}
+                        x1={x}
+                        y1={y}
+                        x2={x + spacing}
+                        y2={y + 70}
+                        stroke={isHighlighted ? "#10b981" : "#6b7280"}
+                        strokeWidth={isHighlighted ? "4" : "3"}
+                        className="transition-all duration-300"
+                        opacity="0.8"
+                    />,
+                )
+            }
+
+            // Render current node
+            const node = heap[index]
+            elements.push(
+                <g key={`node-${index}`}>
+                    <circle
+                        cx={x}
+                        cy={y}
+                        r="24"
+                        className={`transition-all duration-300 ${node.isHighlighted
+                                ? "fill-primary stroke-primary-foreground stroke-2"
+                                : node.isComparing
+                                    ? "fill-yellow-100 stroke-yellow-500 stroke-2"
+                                    : "fill-card stroke-border stroke-2"
+                            }`}
+                    />
+                    <text
+                        x={x}
+                        y={y + 5}
+                        textAnchor="middle"
+                        className={`text-sm font-mono font-bold ${node.isHighlighted ? "fill-primary-foreground" : node.isComparing ? "fill-yellow-800" : "fill-foreground"
+                            }`}
+                    >
+                        {node.value}
+                    </text>
+                </g>,
+            )
+
+            // Render children recursively
+            if (leftChildIndex < heap.length) {
+                elements.push(...renderHeapNode(leftChildIndex, x - spacing, y + 70, level + 1))
+            }
+            if (rightChildIndex < heap.length) {
+                elements.push(...renderHeapNode(rightChildIndex, x + spacing, y + 70, level + 1))
+            }
+
+            return elements
         }
 
         return (
-            <div className="relative">
-                <svg width="100%" height="400" className="absolute inset-0" style={{ zIndex: 1 }}>
-                    {heap.map((_, index) => {
-                        if (index === 0) return null // Root has no parent
-
-                        const parentIndex = getParentIndex(index)
-                        const level = Math.floor(Math.log2(index + 1))
-                        const parentLevel = Math.floor(Math.log2(parentIndex + 1))
-
-                        // Calculate positions
-                        const levelWidth = Math.pow(2, level)
-                        const parentLevelWidth = Math.pow(2, parentLevel)
-                        const positionInLevel = index - (Math.pow(2, level) - 1)
-                        const parentPositionInLevel = parentIndex - (Math.pow(2, parentLevel) - 1)
-
-                        const containerWidth = 600 // Approximate container width
-                        const nodeSpacing = containerWidth / (levelWidth + 1)
-                        const parentNodeSpacing = containerWidth / (parentLevelWidth + 1)
-
-                        const x = (positionInLevel + 1) * nodeSpacing
-                        const y = level * 80 + 50
-                        const parentX = (parentPositionInLevel + 1) * parentNodeSpacing
-                        const parentY = parentLevel * 80 + 50
-
-                        const isHighlighted = heap[index].isHighlighted || heap[parentIndex].isHighlighted
-
-                        return (
-                            <line
-                                key={`edge-${index}`}
-                                x1={parentX}
-                                y1={parentY}
-                                x2={x}
-                                y2={y}
-                                stroke={isHighlighted ? "rgb(16, 185, 129)" : "hsl(var(--muted-foreground))"}
-                                strokeWidth={isHighlighted ? "3" : "2"}
-                                className="transition-all duration-300"
-                            />
-                        )
-                    })}
+            <div className="w-full h-96 border rounded-lg bg-card/50 overflow-auto">
+                <svg width="100%" height="100%" viewBox="0 0 800 400" className="min-w-[800px]">
+                    {heap.length > 0 && renderHeapNode(0, 400, 50, 0)}
                 </svg>
-
-                <div className="space-y-8 py-4 relative" style={{ zIndex: 2 }}>
-                    {levels.map((level, levelIndex) => (
-                        <div key={levelIndex} className="flex justify-center items-center gap-4">
-                            {level.map((node, nodeIndex) => {
-                                const globalIndex = Math.pow(2, levelIndex) - 1 + nodeIndex
-                                return (
-                                    <div
-                                        key={globalIndex}
-                                        className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-semibold text-sm transition-all bg-background ${node.isHighlighted
-                                                ? "border-primary bg-primary text-primary-foreground"
-                                                : node.isComparing
-                                                    ? "border-yellow-500 bg-yellow-100 text-yellow-800"
-                                                    : "border-border"
-                                            }`}
-                                    >
-                                        {node.value}
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    ))}
-                </div>
             </div>
         )
     }
@@ -283,7 +303,7 @@ export function HeapVisualizer() {
                                     </CardTitle>
                                     <CardDescription>Size: {heap.length} nodes</CardDescription>
                                 </div>
-                                <Tabs value={heapType} onValueChange={(value: string) => switchHeapType(value as "min" | "max")}>
+                                <Tabs value={heapType} onValueChange={(value) => switchHeapType(value as "min" | "max")}>
                                     <TabsList>
                                         <TabsTrigger value="min">Min-Heap</TabsTrigger>
                                         <TabsTrigger value="max">Max-Heap</TabsTrigger>
@@ -341,14 +361,6 @@ export function HeapVisualizer() {
                             >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Extract {heapType === "min" ? "Min" : "Max"}
-                            </Button>
-                            <Button
-                                onClick={buildHeap}
-                                variant="outline"
-                                className="w-full bg-transparent"
-                                disabled={heap.length <= 1}
-                            >
-                                Build Heap
                             </Button>
                             <Button onClick={reset} variant="outline" className="w-full bg-transparent">
                                 <RotateCcw className="w-4 h-4 mr-2" />
