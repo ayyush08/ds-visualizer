@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Plus, Trash2, Search, RotateCcw } from "lucide-react"
+import { toast } from "sonner"
 
 interface HashEntry {
     key: string
@@ -60,8 +61,8 @@ export function HashTableVisualizer() {
 
             return newTable
         })
-
-        setOperation(`Inserted "${inputKey}" → "${inputValue}" at slot ${hash}`)
+        toast.success(`Inserted "${inputKey}" → "${inputValue}" at slot ${hash}`)
+        // setOperation(`Inserted "${inputKey}" → "${inputValue}" at slot ${hash}`)
         setInputKey("")
         setInputValue("")
     }
@@ -82,12 +83,15 @@ export function HashTableVisualizer() {
                         index === hash && slot ? slot.map((e) => ({ ...e, isHighlighted: e.key === searchKey })) : slot,
                     ),
                 )
-                setOperation(`Found "${searchKey}" → "${entry.value}" at slot ${hash}`)
+                toast.success(`Found "${searchKey}" → "${entry.value}" at slot ${hash}`)
+                // setOperation(`Found "${searchKey}" → "${entry.value}" at slot ${hash}`)
             } else {
-                setOperation(`Key "${searchKey}" not found in slot ${hash}`)
+                toast.error(`Key "${searchKey}" not found in slot ${hash}`)
+                // setOperation(`Key "${searchKey}" not found in slot ${hash}`)
             }
         } else {
-            setOperation(`Key "${searchKey}" not found - slot ${hash} is empty`)
+            toast.error(`Key "${searchKey}" not found - slot ${hash} is empty`)
+            // setOperation(`Key "${searchKey}" not found - slot ${hash} is empty`)
         }
     }
 
@@ -108,12 +112,15 @@ export function HashTableVisualizer() {
                 }
 
                 if (initialLength > (newTable[hash]?.length ?? 0)) {
-                    setOperation(`Deleted "${searchKey}" from slot ${hash}`)
+                    toast.success(`Deleted "${searchKey}" from slot ${hash}`)
+                    // setOperation(`Deleted "${searchKey}" from slot ${hash}`)
                 } else {
-                    setOperation(`Key "${searchKey}" not found in slot ${hash}`)
+                    toast.error(`Key "${searchKey}" not found in slot ${hash}`)
+                    // setOperation(`Key "${searchKey}" not found in slot ${hash}`)
                 }
             } else {
-                setOperation(`Key "${searchKey}" not found - slot ${hash} is empty`)
+                toast.error(`Key "${searchKey}" not found - slot ${hash} is empty`)
+                // setOperation(`Key "${searchKey}" not found - slot ${hash} is empty`)
             }
             return newTable
         })
@@ -247,7 +254,7 @@ export function HashTableVisualizer() {
                         </CardContent>
                     </Card>
 
-                    <Card>
+                    {/* <Card>
                         <CardHeader>
                             <CardTitle className="text-lg">Hash Function</CardTitle>
                         </CardHeader>
@@ -259,7 +266,7 @@ export function HashTableVisualizer() {
                                 </p>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
 
                     <Card>
                         <CardHeader>
@@ -272,7 +279,7 @@ export function HashTableVisualizer() {
                             </Button>
                         </CardContent>
                     </Card>
-
+{/* 
                     {operation && (
                         <Card>
                             <CardHeader>
@@ -284,7 +291,7 @@ export function HashTableVisualizer() {
                                 </Badge>
                             </CardContent>
                         </Card>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div>

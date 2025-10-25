@@ -131,28 +131,28 @@ const dataStructures: DataStructure[] = [
         timeComplexity: "O(log n) insert/extract, O(1) peek",
         spaceComplexity: "O(n)",
     },
-    {
-        id: "segment-tree",
-        name: "Segment Tree",
-        category: "advanced",
-        difficulty: "Hard",
-        icon: Layers,
-        description: "Tree for answering range queries and updates efficiently",
-        operations: ["Build", "Query", "Update", "Range Update"],
-        timeComplexity: "O(log n) query/update",
-        spaceComplexity: "O(n)",
-    },
-    {
-        id: "fenwick-tree",
-        name: "Fenwick Tree (BIT)",
-        category: "advanced",
-        difficulty: "Hard",
-        icon: BarChart3,
-        description: "Binary Indexed Tree for prefix sum queries and updates",
-        operations: ["Update", "Query", "Range Query"],
-        timeComplexity: "O(log n) all operations",
-        spaceComplexity: "O(n)",
-    },
+    // {
+    //     id: "segment-tree",
+    //     name: "Segment Tree",
+    //     category: "advanced",
+    //     difficulty: "Hard",
+    //     icon: Layers,
+    //     description: "Tree for answering range queries and updates efficiently",
+    //     operations: ["Build", "Query", "Update", "Range Update"],
+    //     timeComplexity: "O(log n) query/update",
+    //     spaceComplexity: "O(n)",
+    // },
+    // {
+    //     id: "fenwick-tree",
+    //     name: "Fenwick Tree (BIT)",
+    //     category: "advanced",
+    //     difficulty: "Hard",
+    //     icon: BarChart3,
+    //     description: "Binary Indexed Tree for prefix sum queries and updates",
+    //     operations: ["Update", "Query", "Range Query"],
+    //     timeComplexity: "O(log n) all operations",
+    //     spaceComplexity: "O(n)",
+    // },
     {
         id: "dsu",
         name: "Disjoint Set Union",
@@ -225,10 +225,6 @@ export function DataStructures() {
                 return <BSTVisualizer />
             case "avl-tree":
                 return <AVLTreeVisualizer />
-            case "segment-tree":
-                return <SegmentTreeVisualizer />
-            case "fenwick-tree":
-                return <FenwickTreeVisualizer />
             case "dsu":
                 return <DSUVisualizer />
             case "graph-traversal":
@@ -325,9 +321,9 @@ export function DataStructures() {
                                         <TabsTrigger value="graph" className={`justify-start ${selectedCategory === "graph" ? "bg-black border-orange-300 text-primary-foreground" : ""}`}>
                                             Graphs
                                         </TabsTrigger>
-                                        <TabsTrigger value="advanced" className={`justify-start ${selectedCategory === "advanced" ? "bg-black border-orange-300 text-primary-foreground" : ""}`}>
+                                        {/* <TabsTrigger value="advanced" className={`justify-start ${selectedCategory === "advanced" ? "bg-black border-orange-300 text-primary-foreground" : ""}`}>
                                             Advanced
-                                        </TabsTrigger>
+                                        </TabsTrigger> */}
                                     </TabsList>
                                 </Tabs>
                             </CardContent>
@@ -385,8 +381,8 @@ export function DataStructures() {
                                                     "binary-tree",
                                                     "bst",
                                                     "avl-tree",
-                                                    "segment-tree",
-                                                    "fenwick-tree",
+                                                    // "segment-tree",
+                                                    // "fenwick-tree",
                                                     "dsu",
                                                     "graph-traversal",
                                                     "hash-table",
